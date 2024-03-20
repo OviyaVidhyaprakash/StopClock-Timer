@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch App</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #timer {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="text-center">
+      <h1>Stopwatch</h1>
+      <p id="timer">00:00:00</p>
+      <button class="btn btn-primary" id="startBtn">Start</button>
+      <button class="btn btn-secondary" id="stopBtn">Stop</button>
+      <button class="btn btn-danger" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let timerInterval;
+    let startTime;
+    let elapsedTime = 0;
+    let isRunning = false;
+    const timerDisplay = document.getElementById('timer');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function startTimer() {
+      if (!isRunning) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(updateTimer, 1000);
+        isRunning = true;
+      }
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      elapsedTime = 0;
+      updateTimer();
+      isRunning = false;
+    }
+
+    function updateTimer() {
+      const currentTime = Date.now();
+      elapsedTime = isRunning ? currentTime - startTime : 0;
+
+      const elapsedTimeInSeconds = Math.floor(elapsedTime / 1000);
+      const hours = Math.floor(elapsedTimeInSeconds / 3600);
+      const minutes = Math.floor((elapsedTimeInSeconds % 3600) / 60);
+      const seconds = elapsedTimeInSeconds % 60;
+
+      const displayHours = hours < 10 ? '0' + hours : hours;
+      const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
+      const displaySeconds = seconds < 10 ? '0' + seconds : seconds;
+
+      timerDisplay.textContent = `${displayHours}:${displayMinutes}:${displaySeconds}`;
+    }
+
+    startBtn.addEventListener('click', () => {
+      startTimer();
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      resetBtn.disabled = false;
+    });
+
+    stopBtn.addEventListener('click', () => {
+      stopTimer();
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    });
+
+    resetBtn.addEventListener('click', () => {
+      resetTimer();
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      resetBtn.disabled = true;
+    });
+
+    // Initialize timer display
+    updateTimer();
+  </script>
+</body>
+</html>
